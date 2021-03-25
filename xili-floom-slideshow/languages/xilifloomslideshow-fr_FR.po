@@ -1,0 +1,130 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: xili-floom-slideshow\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-11 22:11+0100\n"
+"PO-Revision-Date: 2012-04-11 22:12+0100\n"
+"Last-Translator: dev.xiligroup <contact@xiligroup.com>\n"
+"Language-Team: dev.xiligroup.com <contact@xiligroup.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e;_x\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: xili-floom-slideshow.php:132
+msgid "xili floom slideshow"
+msgstr "Diaporama xili floom"
+
+#: xili-floom-slideshow.php:141
+msgid "Message"
+msgstr "Message"
+
+#: xili-floom-slideshow.php:424
+msgid "no image: see again params"
+msgstr "images introuvables : vérifier les paramètres"
+
+#: xili-floom-slideshow.php:578
+msgid "Settings"
+msgstr "Réglages"
+
+#: xili-floom-slideshow.php:586
+msgid "Note:"
+msgstr "Note :"
+
+#: xili-floom-slideshow.php:596
+msgid "plugin integrates the modules of Floom slideshow in your current theme and detect the specific configurations for Floom in your theme."
+msgstr "est une extension qui permet l'intégration aisée du diaporama Floom dans le thème courant et détecte les configurations spécifiques pour Floom dans le thème."
+
+#: xili-floom-slideshow.php:597
+msgid "The current theme is here"
+msgstr "Le thème courant est là "
+
+#: xili-floom-slideshow.php:598
+msgid "The active floom.css is here"
+msgstr "Le fichier actif floom.css est là "
+
+#: xili-floom-slideshow.php:606
+msgid "xilitheme-select plugin active"
+msgstr "L'extension xilitheme-select est activée"
+
+#: xili-floom-slideshow.php:616
+msgid "The Floom slideshow javascript contains a lot of parameters. Instead modifying source, here, you can change some parameters for your whole site. Some settings are possible for one post (see docs)."
+msgstr "Le javascript Floom contient une multitude de paramètres. Au lieu de modifier le source, ici, il est possible de modifier des paramètres pris en compte dans tout le site. Mais des réglages peuvent être ciblés pour un article seul via les champs personnalisés de chaque article ou page."
+
+#: xili-floom-slideshow.php:617
+msgid "Parameters as currently saved"
+msgstr "Les paramètres en cours"
+
+#: xili-floom-slideshow.php:621
+msgid "Parameters list"
+msgstr "La liste des paramètres"
+
+#: xili-floom-slideshow.php:622
+#: xili-floom-slideshow.php:644
+msgid "Parameter:"
+msgstr "Paramètre :"
+
+#: xili-floom-slideshow.php:639
+#: xili-floom-slideshow.php:651
+msgid "Update"
+msgstr "Mise à jour"
+
+#: xili-floom-slideshow.php:642
+msgid "Special gold parameters"
+msgstr "Paramètres spéciaux"
+
+#: xili-floom-slideshow.php:643
+msgid "These parameters are reserved if extended js class of the original Floom class is used"
+msgstr "Ces paramètres sont réservés pour l'usage d'une classe js extension de la classe originelle Floom"
+
+#: xili-floom-slideshow.php:647
+msgid "Gold inactive"
+msgstr "Classe étendue inactive"
+
+#: xili-floom-slideshow.php:648
+msgid "Gold active"
+msgstr "Classe étendue active"
+
+#: xili-floom-slideshow.php:653
+msgid "For more info about javascript see Floom documentation. Floom slideshow javascript was designed by Oskar Krawczyk (<a href='http://nouincolor.com/' target='_blank' >http://nouincolor.com/</a>) under MIT license. This plugin for Wordpress don't modify the original js source."
+msgstr "Les informations sur le javascript du diaporama Floom sont sur le site de son auteur Oskar Krawczyk (<a href='http://nouincolor.com/' target='_blank' >http://nouincolor.com/</a>)"
+
+#: xili-floom-slideshow.php:699
+msgid "Style Settings"
+msgstr "Réglage des styles"
+
+#: xili-floom-slideshow.php:700
+msgid "SlideShow Settings"
+msgstr "Réglages du diaporama"
+
+#: xili-floom-slideshow.php:704
+msgid "xili-floom-slideshow settings"
+msgstr "Réglages du diaporama xili-floom"
+
+#: xili-floom-slideshow.php:740
+msgid "Author"
+msgstr "Auteur"
+
+#~ msgid "xili-floom-slideshow"
+#~ msgstr "xili-floom-slideshow"
+
+#~ msgid "http://dev.xiligroup.com/xili-floom-slideshow/"
+#~ msgstr "http://dev.xiligroup.com/xili-floom-slideshow/"
+
+#~ msgid ""
+#~ "xili-floom-slideshow integrate the floom slideshow from Oskar in "
+#~ "wordpress theme -"
+#~ msgstr ""
+#~ "xili-floom-slideshow permet l'intégration aisée du diaporama Floom dans "
+#~ "un thème Wordpress"
+
+#~ msgid "MS dev.xiligroup team"
+#~ msgstr "MS dev.xiligroup team"
+
+#~ msgid "http://dev.xiligroup.com"
+#~ msgstr "http://dev.xiligroup.com"
