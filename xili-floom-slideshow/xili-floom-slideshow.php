@@ -15,7 +15,7 @@ Text Domain: xilifloomslideshow
 Domain Path: /languages/
  */
 
-// 1.3.2 - 210325 - mootools 1.6.0 (compressed or not)
+// 1.3.2 - 210325 - mootools 1.6.0 (compressed or not) - published in Github/dev-xiligroup
 // 1.3.1 - 210323 - few improvements and WP standard code rules
 // 1.3 - 140418 - few improvements for 3.9
 // 1.2 - 130524 - caution message in js if images unavailable, __construct

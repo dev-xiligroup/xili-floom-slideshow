@@ -22,6 +22,7 @@ Some properties can be attached to one post by using custom fields and to one sh
 = Version 1.3.2 =
 * Last Updated 2021-03-25
 * RW according WPCS - Mootools v1.6.0
+*
 * Last Updated 2014-04-18 
 * See [tab and chapters in changelog](http://wordpress.org/extend/plugins/xili-floom-slideshow/changelog/)
 = roadmap =
