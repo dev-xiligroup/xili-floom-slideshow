@@ -25,11 +25,11 @@ Domain Path: /languages/
 // 0.9.8 - 111204 - enable now to display more than one slideshow
 // 0.9.7 - 110601 - OOP and new like sub-select for file due to 3.1
 // 0.9.5 - 101109 - integrate child theme better
-// 0.9.4 add thumbnail bar with Shortcode [xilifloombar]
-// 0.9.3 add gold params
-// 0.9.2 add for pictures orderby menu_order - add hooks - fix quoted captions
-// 0.9.1 xilitheme-select plugin compatibility, add options to fireEvents, fixes,...
-// 0.9.0 First public
+// 0.9.4 - 10xxxx - add thumbnail bar with Shortcode [xilifloombar]
+// 0.9.3 - 100714 - add gold params
+// 0.9.2 - 091125 - add for pictures orderby menu_order - add hooks - fix quoted captions
+// 0.9.1 - 091121 - xilitheme-select plugin compatibility, add options to fireEvents, fixes,...
+// 0.9.0 - 091119 - First public
 define( 'XILIFLOOM_VER', '1.3.2' );
 
 /**
@@ -41,20 +41,44 @@ class Xili_Floom_Activate {
 
 	/** Settings saved
 
-	 @var $xili_settings
+	 * @var $xili_settings
 	 */
 	private $xili_settings = array();
-	/** Variable @var */
-	private $xilifloom_name_selector = '';
 
-	private $floom_subname = ''; // 0.9.8
+	/** Sub-selector (%IMG%) of images in post meta
 
+	 * @var $xilifloom_name_selector
+	 */
+	public $xilifloom_name_selector = '';
+
+	/** Sub-selector (%IMG%) of images
+
+	 * @var $floom_subname
+	 */
+	public $floom_subname = '';
+
+	/** Images attached to current post
+
+	 * @var $xili_singular_images
+	 */
 	private $xili_singular_images = array();
 
+	/** How many shorcodes to display
+
+	 * @var $shortcode_count
+	 */
 	private $shortcode_count = 0;
 
+	/** Params of the current shortcode Floom
+
+	 * @var $shortcode_content
+	 */
 	private $shortcode_content = array();
 
+	/** Current post ID
+
+	 * @var $singular_id
+	 */
 	private $singular_id = 0; // id of post when no shortcode !
 
 	/** Construct */
@@ -99,7 +123,7 @@ class Xili_Floom_Activate {
 		}
 		if ( '1.8' > $this->xili_settings['version'] ) {
 			$this->xili_settings['version'] = '1.8';
-			$this->xilifloom_default_settings(); // update keys by default
+			$this->xilifloom_default_settings(); // update keys by default !
 			$this->xili_settings = get_option( 'xilifloomslideshow_settings' );
 		}
 		/** Browsing side */
@@ -186,23 +210,50 @@ class Xili_Floom_Activate {
 	}
 
 	/**
-	 * Shortcode [xilifloombar] adding thumbnail of all attached images in page or single -- Obsolete --
+	 * Shortcode [xilifloombar] adding thumbnail of all attached images in page or single -- Need improvements --
 	 *
-	 * @ since 0.9.4
+	 * @param array  $atts params from shortcode - [xilifloombar floombar_subname = "%MAP_I%" ].
+	 *
+	 * @param string $content pre-result of shortcode.
+
+	 * @since 0.9.4
 	 */
 	public function insert_a_floombar( $atts, $content = null ) {
-
+		global $post;
 		$arr_result = shortcode_atts(
 			array(
 				'floombarframe_id' => 'floombarframe_id',
 				'floombar_id' => 'floombar_id',
+				'floombar_subname' => '',
 			),
 			$atts
 		);
-		// only if single or page - need code lines && ( array() != $this->xili_singular_images ) !
+		$default_atts = $this->shortcode_get_values( $post->ID ); // general if not set in post !
+		if ( '' != get_post_meta( $post->ID, 'floombar_subname', true ) && '' != $arr_result ['floombar_subname'] ) { // only if empty in atts.
+			$default_atts['floombar_subname'] = get_post_meta( $post->ID, 'floombar_subname', true );
+		} else {
+			$arr_result['floombar_subname'] = get_post_meta( $post->ID, 'floombar_subname', true ); // because merge !
+		}
+		$the_floom_values = array_merge( $default_atts, $arr_result );
+		$this->floom_subname = $the_floom_values['floombar_subname'];
 		if ( is_singular() ) {
-			$nb = count( $this->xili_singular_images );
-			return '<div style="background-color:00FF00;" >*' . $nb . '*</div>';
+
+			if ( has_filter( 'xili_floom_get_images' ) ) {
+				$images = apply_filters( 'xili_floom_get_images', $the_floom_values['children'], $the_floom_values['floombar_subname'] );
+			} else {
+				$images = $this->xilifloom_get_images( $the_floom_values['children'], $the_floom_values['floombar_subname'] );
+			}
+		}
+		if ( is_singular() && ( array() != $images ) ) {
+			// get_images !
+			// fill div !
+			$output = '';
+			$i = 0;
+			foreach ( $images as $attach_id => $image ) {
+				$i++;
+				$output .= '<img onclick="theFloom.goto(' . $i . ')" src="' . wp_get_attachment_thumb_url( $attach_id ) . '" />';
+			}
+			return '<div id="' . $arr_result['floombarframe_id'] . '"><div id="' . $arr_result['floombar_id'] . '">' . $output . '</div></div>';
 		} else {
 			return '';
 		}
@@ -224,7 +275,7 @@ class Xili_Floom_Activate {
 	/**
 	 * Select stule sheet
 
-	 * @ updated 0.9.1 for xilitheme-select compatibility
+	 * @updated 0.9.1 for xilitheme-select compatibility
 	 */
 	public function xilifloom_stylesheet() {
 		global $wp_ismobile;
@@ -257,6 +308,8 @@ class Xili_Floom_Activate {
 
 	/**
 	 * Get values in current post way
+	 *
+	 * @param integer $post_ID post unique ID.
 
 	 * @since 0.9.2
 	 */
@@ -318,7 +371,8 @@ class Xili_Floom_Activate {
 
 	/**
 	 * Get default values for current shortcode
-
+	 *
+	 * @param integer $post_ID post unique ID.
 	 * @since 0.9.8
 	 */
 	private function shortcode_get_values( $post_ID ) {
@@ -364,6 +418,8 @@ class Xili_Floom_Activate {
 
 	/**
 	 * Insert javascript in header
+
+	 * @param integer $uid unique id if multiple slideshows.
 
 	 * @updated 0.9.3 , 0.9.8
 	 */
@@ -475,7 +531,7 @@ class Xili_Floom_Activate {
 					/* container is not displayed */
 					?>
 					$('<?php echo $frame_id; ?>'). setStyle('display', '<?php echo $display; ?>');
-					$('<?php echo $frame_id; ?>').set('html','<p style="color:red"><?php _e( 'no image: see again params', 'xilifloomslideshow'); ?></p>');
+					$('<?php echo $frame_id; ?>').set('html','<p style="color:red"><?php _e( 'no image: see again params', 'xilifloomslideshow' ); ?></p>');
 				<?php
 				} else {
 					echo $nonefunction . '();'; // xss !
@@ -558,7 +614,11 @@ class Xili_Floom_Activate {
 
 	/**
 	 * Create list of images (and caption) from post_id
-
+	 *
+	 * @param integer $post_ID post unique ID.
+	 *
+	 * @param string  $post_name_selector sub-selection as LIKE in sql with one or two %.
+	 *
 	 * @updated 0.9.2 - add orderby - 0.9.3 - sub-selection as LIKE in sql with one or two %
 	 */
 	private function xilifloom_get_images( $post_ID, $post_name_selector ) {
@@ -575,12 +635,14 @@ class Xili_Floom_Activate {
 
 	/**
 	 * Filter list of images with post_name
-
+	 *
+	 * @param string $where sub-selection.
+	 *
 	 * @since 0.9.3 - sub-selection
 	 * @updated 0.9.6 - via guid because post_name don't contains name of file as before 3.0
 	 * @updated 0.9.8
 	 */
-	private function where_post_name_subselect( $where ) {
+	public function where_post_name_subselect( $where ) {
 		global $wpdb;
 		$column = $this->xili_settings['post_column'];
 		if ( 'guid' == $column ) {
@@ -596,6 +658,9 @@ class Xili_Floom_Activate {
 	 * Fill shortcode with datas
 	 * shortcode params : frame_id = id of the frame's div, blinds_id = id of the images and blinds divs
 	 *
+	 * @param array  $atts params from shortcode.
+	 *
+	 * @param string $content pre-result of shortcode.
 	 */
 	public function insert_a_floom( $atts, $content = null ) {
 		global $post;
@@ -622,7 +687,6 @@ class Xili_Floom_Activate {
 	 * Insert domready and content now in footer with results of shortcodes
 	 *
 	 * @since 0.9.8
-	 *
 	 */
 	public function xilifloom_insert_scripts() {
 		if ( $this->shortcode_count < 1 ) {
@@ -634,6 +698,11 @@ class Xili_Floom_Activate {
 		}
 	}
 
+	/**
+	 * Keep current post ID
+	 *
+	 * @since 0.9.8
+	 */
 	public function keep_current_post_id() {
 		global $post;
 		$this->singular_id =& $post->ID; // 0.9.9 notice !
@@ -646,6 +715,10 @@ class Xili_Floom_Activate {
 	/**
 	 * Add action link(s) to plugins page
 	 *
+	 * @param array  $links previous links.
+	 *
+	 * @param string $file this file.
+
 	 * @since 0.9.3
 	 * @author MS
 	 * @copyright Dion Hulse, http://dd32.id.au/wordpress-plugins/?configure-link and scripts@schloebe.de
@@ -661,15 +734,25 @@ class Xili_Floom_Activate {
 		}
 		return $links;
 	}
+
+	/**
+	 * Add sidebox
+	 *
+	 * @param array $data with message and action.
+	 */
 	public function on_sidebox_1_content( $data ) {
 		extract( $data );
 		?>
 		<h4><?php esc_html_e( 'Note:', 'xilifloomslideshow' ); ?></h4>
-		<p><?php echo $message; // xss !?></p>
-		<p><?php echo $action; // xss !?></p>
+		<p><?php echo $message; // xss ! ?></p>
+		<p><?php echo $action; // xss ! ?></p>
 		<?php
 	}
-
+	/**
+	 * Add main content
+	 *
+	 * @param array $data with message and action.
+	 */
 	public function on_normal_1_content( $data ) {
 		// extract( $data ); !
 		?>
@@ -700,7 +783,11 @@ class Xili_Floom_Activate {
 
 		<?php
 	}
-
+	/**
+	 * Add snd main content
+	 *
+	 * @param array $data with message and action.
+	 */
 	public function on_normal_2_content( $data ) {
 		$this->xili_settingsaved = get_option( 'xilifloomslideshow_settings' );
 
@@ -752,11 +839,14 @@ class Xili_Floom_Activate {
 		<div class='submit'>
 			<input id='setgoldparams' name='setgoldparams' type='submit' tabindex='6' value="<?php esc_html_e( 'Update', 'xilifloomslideshow' ); ?>" /></div>
 		</fieldset>
-		<p><?php _e( "For more info about javascript see Floom documentation. Floom slideshow javascript was designed by Oskar Krawczyk (<a href='http://nouincolor.com/' target='_blank' >http://nouincolor.com/</a>) under MIT license. This plugin for Wordpress don't modify the original js source.", 'xilifloomslideshow' );?></p>
+		<p><?php _e( "For more info about javascript see Floom documentation. Floom slideshow javascript was designed by Oskar Krawczyk (<a href='http://nouincolor.com/' target='_blank' >http://nouincolor.com/</a>) under MIT license. This plugin for Wordpress don't modify the original js source.", 'xilifloomslideshow' ); ?></p>
 		<?php
 		echo wp_nonce_field( 'xilifloomoptions', '_ajax_nonce', true, false ); // xss !
 	}
 
+	/**
+	 * Build main admin UI
+	 */
 	public function xili_floom_active_menu() {
 		$message = '';
 		$action = '';
@@ -868,12 +958,13 @@ class Xili_Floom_Activate {
  *
  * @since 0.9.7
  */
-
 $xili_floom_activate = new Xili_Floom_Activate();
 
 
 /**
  * As previous function before class
+ *
+ * @param integer $post_id post unique ID.
  *
  * @since 0.9.7
  * @updated 0.9.8 with post_id as params
@@ -886,6 +977,8 @@ function xilifloom_get_values( $post_id = 0 ) {
 /**
  * Replace previous global $xilifloom_name_selector - floom_subname in postmeta
  *
+ * @param string $thelike picture's name selecto like %_IMG_%.
+ *
  * @since 0.9.7
  */
 function set_xilifloom_name_selector( $thelike = '' ) {
@@ -894,4 +987,4 @@ function set_xilifloom_name_selector( $thelike = '' ) {
 }
 
 
-/* ©xiligroup.com - 2009 - 2014 - rw 2021 */
+/* ©xiligroup.com - 2009 - 2014 - rw 2021-03-26 */
